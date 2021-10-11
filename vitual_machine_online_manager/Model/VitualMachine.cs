@@ -13,6 +13,7 @@ namespace vitual_machine_online_manager.Model
         public TimeSpan? durationFromLastTimePing { get; private set; }
         public bool? isOk { get; private set; }
         public List<String> listNameScreenshot { get; private set; }
+        private bool loaded;
 
         public VitualMachine(String name)
         {
@@ -21,14 +22,19 @@ namespace vitual_machine_online_manager.Model
             this.durationFromLastTimePing = null;
             this.isOk = null;
             this.listNameScreenshot = new List<String>();
+            this.loaded = false;
         }
 
         public void Load(DateTime? lastTimePing, TimeSpan? durationFromLastTimePing, bool? isOk, List<String>? listNameScreenshot)
         {
-            this.lastTimePing = lastTimePing;
-            this.durationFromLastTimePing = durationFromLastTimePing;
-            this.isOk = isOk;
-            this.listNameScreenshot = listNameScreenshot ?? new List<String>();
+            if (!this.loaded)
+            {
+                this.lastTimePing = lastTimePing;
+                this.durationFromLastTimePing = durationFromLastTimePing;
+                this.isOk = isOk;
+                this.listNameScreenshot = listNameScreenshot ?? new List<String>();
+                this.loaded = true;
+            }
         }
 
     }
