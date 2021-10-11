@@ -25,7 +25,7 @@ namespace vitual_machine_online_manager.Model
             this.loaded = false;
         }
 
-        public void Load(DateTime? lastTimePing, TimeSpan? durationFromLastTimePing, bool? isOk, List<String>? listNameScreenshot)
+        public void loadFromStorage(DateTime? lastTimePing, TimeSpan? durationFromLastTimePing, bool? isOk, List<String>? listNameScreenshot)
         {
             if (!this.loaded)
             {
