@@ -20,7 +20,7 @@ namespace vitual_machine_online_manager.Model
             this.lastTimePing = null;
             this.durationFromLastTimePing = null;
             this.isOk = null;
-            this.listNameScreenshot = listNameScreenshot ?? new List<String>();
+            this.listNameScreenshot = new List<String>();
         }
 
         public void Load(DateTime? lastTimePing, TimeSpan? durationFromLastTimePing, bool? isOk, List<String>? listNameScreenshot)
