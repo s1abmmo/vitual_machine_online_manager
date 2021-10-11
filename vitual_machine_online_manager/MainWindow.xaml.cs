@@ -13,6 +13,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using vitual_machine_online_manager.Model;
+using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace vitual_machine_online_manager
 {
@@ -25,7 +28,10 @@ namespace vitual_machine_online_manager
         {
             InitializeComponent();
             var cc = new VitualMachine(name: "DMM");
-            MessageBox.Show(cc.lastTimePing.ToString());
+            string jsonString = JsonSerializer.Serialize(cc);
+
+            MessageBox.Show(jsonString);
+
         }
     }
 }
