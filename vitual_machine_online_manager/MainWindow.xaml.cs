@@ -44,20 +44,31 @@ namespace vitual_machine_online_manager
             {
                 if (a.vmName == "" || a.vmName == null)
                     return;
+
                 int index = listVitualMachine.FindIndex(0, listVitualMachine.Count, x => x.name == a.vmName);
                 //Check exist in list
                 if (index == -1)
                 {
                     listVitualMachine.Add(new VitualMachine(name: a.vmName, createByClient: true));
+
+                    index = listVitualMachine.FindIndex(0, listVitualMachine.Count, x => x.name == a.vmName);
+
+                    String nameImage = SaveFile.SaveImageBase64(a.imageBase64, a.vmName);
+
+                    listVitualMachine[index].updateData(nameImage,a.clipboard);
+
                     this.Dispatcher.Invoke(() =>
                     {
                         listView.Items.Refresh();
                     });
-                    //listVitualMachine[listVitualMachine.Count-1]
+
                 }
                 else
                 {
-                    listVitualMachine[index].updateData(new List<string> { "" });
+                    String nameImage = SaveFile.SaveImageBase64(a.imageBase64, a.vmName);
+
+                    listVitualMachine[index].updateData(nameImage, a.clipboard);
+
                     this.Dispatcher.Invoke(() =>
                     {
                         listView.Items.Refresh();

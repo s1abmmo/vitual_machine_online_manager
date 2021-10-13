@@ -7,6 +7,7 @@ using System.Net;
 using vitual_machine_online_manager.Model;
 using System.Threading;
 using System.Windows;
+using System.IO;
 
 namespace vitual_machine_online_manager.Function
 {
@@ -68,10 +69,20 @@ namespace vitual_machine_online_manager.Function
                 HttpListenerContext context = listener.GetContext();
                 HttpListenerRequest request = context.Request;
 
+                using (var reader = new StreamReader(request.InputStream,
+                                     request.ContentEncoding))
+                {
+                    string text = reader.ReadToEnd();
+                    MessageBox.Show(text);
+                }
+
+                MessageBox.Show("new request");
+                MessageBox.Show(request.QueryString.Count.ToString());
+
                 try
                 {
                     String vmName = request.QueryString["vmName"];
-                    String? imageBase64 = request.QueryString["imagBase64"];
+                    String? imageBase64 = request.QueryString["imageBase64"];
                     String? clipboard = request.QueryString["clipboard"];
                     callBack(new ClientData(vmName: vmName, imageBase64: imageBase64, clipboard: clipboard));
                 }

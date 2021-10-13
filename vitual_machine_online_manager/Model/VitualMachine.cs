@@ -11,6 +11,7 @@ namespace vitual_machine_online_manager.Model
         public String name { get; private set; }
         public DateTime? lastTimePing { get; private set; }
         public List<String> listNameScreenshot { get; private set; }
+        public List<String> listClipboard { get; private set; }
         private bool loaded;
 
         public VitualMachine(String name, bool createByClient = false)
@@ -22,7 +23,8 @@ namespace vitual_machine_online_manager.Model
                 var dateTimeUtc = DateTime.Now.ToUniversalTime();
                 lastTimePing = dateTimeUtc.AddHours(7);
             }
-            this.listNameScreenshot = new List<String>();
+            this.listNameScreenshot = createByClient ? new List<String>() : null;
+            this.listClipboard = createByClient ? new List<String>() : null;
             this.loaded = false;
         }
 
@@ -36,10 +38,14 @@ namespace vitual_machine_online_manager.Model
             }
         }
 
-        public void updateData(List<String> listNameScreenshot)
+        public void updateData(String? nameScreenshot, String? clipboard)
         {
             var dateTimeUtc = DateTime.Now.ToUniversalTime();
             lastTimePing = dateTimeUtc.AddHours(7);
+            if (nameScreenshot != null)
+                this.listNameScreenshot.Add(nameScreenshot);
+            if (clipboard != null)
+                this.listClipboard.Add(clipboard);
         }
 
     }
