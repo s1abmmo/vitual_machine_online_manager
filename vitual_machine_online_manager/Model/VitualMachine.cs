@@ -10,17 +10,18 @@ namespace vitual_machine_online_manager.Model
     {
         public String name { get; private set; }
         public DateTime? lastTimePing { get; private set; }
-        public TimeSpan? durationFromLastTimePing { get; private set; }
-        public bool? isOk { get; private set; }
         public List<String> listNameScreenshot { get; private set; }
         private bool loaded;
 
-        public VitualMachine(String name)
+        public VitualMachine(String name, bool createByClient = false)
         {
             this.name = name;
             this.lastTimePing = null;
-            this.durationFromLastTimePing = null;
-            this.isOk = null;
+            if (createByClient)
+            {
+                var dateTimeUtc = DateTime.Now.ToUniversalTime();
+                lastTimePing = dateTimeUtc.AddHours(7);
+            }
             this.listNameScreenshot = new List<String>();
             this.loaded = false;
         }
@@ -30,11 +31,15 @@ namespace vitual_machine_online_manager.Model
             if (!this.loaded)
             {
                 this.lastTimePing = lastTimePing;
-                this.durationFromLastTimePing = durationFromLastTimePing;
-                this.isOk = isOk;
                 this.listNameScreenshot = listNameScreenshot ?? new List<String>();
                 this.loaded = true;
             }
+        }
+
+        public void updateData(List<String> listNameScreenshot)
+        {
+            var dateTimeUtc = DateTime.Now.ToUniversalTime();
+            lastTimePing = dateTimeUtc.AddHours(7);
         }
 
     }

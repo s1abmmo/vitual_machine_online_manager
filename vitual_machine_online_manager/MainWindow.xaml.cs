@@ -28,24 +28,84 @@ namespace vitual_machine_online_manager
         public MainWindow()
         {
             InitializeComponent();
-            var cc = new VitualMachine(name: "DMM");
-            string jsonString = JsonSerializer.Serialize(cc);
+            listView.ItemsSource = listVitualMachine;
+            //var cc = new VitualMachine(name: "DMM");
+            //string jsonString = JsonSerializer.Serialize(cc);
 
-            MessageBox.Show(jsonString);
+            Loop.Instance().Run(() => {
+                this.Dispatcher.Invoke(() =>
+                {
+                    listView.Items.Refresh();
+                });
+            });
 
             String[] prefix = { "http://localhost:9999/" };
-            Server.HttpListening(prefix, (a) => {
-                int index=listVitualMachine.FindIndex(0, listVitualMachine.Count, x => x.name == a.vmName);
+            ServerHttpListener.Instance().Run(prefix, (a) =>
+            {
+                if (a.vmName == "" || a.vmName == null)
+                    return;
+                int index = listVitualMachine.FindIndex(0, listVitualMachine.Count, x => x.name == a.vmName);
+                //Check exist in list
                 if (index == -1)
                 {
-                    listVitualMachine.Add(new VitualMachine(name: a.vmName));
+                    listVitualMachine.Add(new VitualMachine(name: a.vmName, createByClient: true));
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        listView.Items.Refresh();
+                    });
                     //listVitualMachine[listVitualMachine.Count-1]
+                }
+                else
+                {
+                    listVitualMachine[index].updateData(new List<string> { "" });
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        listView.Items.Refresh();
+                    });
                 }
             });
         }
 
-        private static List<VitualMachine> listVitualMachine=new List<VitualMachine>();
-
+        private static List<VitualMachine> listVitualMachine = new List<VitualMachine>();
 
     }
+
+    public class StatusConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is not DateTime)
+                return "WAIT";
+
+            TimeSpan duration = DateTime.Now.ToUniversalTime() - (DateTime)value;
+
+            if(duration<Configs.Instance().distanceMaxTime)
+                return "OK";
+                
+            return "ERROR";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return Binding.DoNothing;
+        }
+    }
+
+    public class DurationConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is not DateTime)
+                return "---";
+
+            TimeSpan duration = DateTime.Now.ToUniversalTime().AddHours(7)-(DateTime)value;
+            return duration.ToString(@"dd\.hh\:mm\:ss");
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return Binding.DoNothing;
+        }
+    }
+
 }

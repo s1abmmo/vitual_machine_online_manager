@@ -1,0 +1,15 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:vitual_machine_online_manager"
+                    >
+    <Style x:Key="textStatus" TargetType="TextBlock">
+        <Setter Property="Text" Value="OK" />
+        <Setter Property="Foreground" Value="Blue" />
+        <Style.Triggers>
+            <DataTrigger>
+                <Setter Property="Text" Value="ERROR" />
+                <Setter Property="Foreground" Value="Red" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

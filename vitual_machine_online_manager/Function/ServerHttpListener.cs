@@ -5,12 +5,42 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using vitual_machine_online_manager.Model;
+using System.Threading;
+using System.Windows;
 
 namespace vitual_machine_online_manager.Function
 {
-   public  class Server
+    public class ServerHttpListener
     {
-        public static void HttpListening(string[] prefixes, Action<ClientData> callBack)
+        private static readonly ServerHttpListener Self = new ServerHttpListener();
+        private Thread thread;
+        private ServerHttpListener() { }
+        public static ServerHttpListener Instance()
+        {
+            return Self;
+        }
+        public void Run(string[] prefixes, Action<ClientData> callBack)
+        {
+            if (thread == null)
+            {
+                thread = new Thread(() => { HttpListening(prefixes, callBack); });
+                thread.Start();
+            }
+        }
+
+        public static void Dispose()
+        {
+            if (Self.thread != null)
+            {
+                try
+                {
+                    Self.thread.Abort();
+                }
+                catch { }
+            }
+        }
+
+        private static void HttpListening(string[] prefixes, Action<ClientData> callBack)
         {
             if (!HttpListener.IsSupported)
             {
@@ -38,9 +68,14 @@ namespace vitual_machine_online_manager.Function
                 HttpListenerContext context = listener.GetContext();
                 HttpListenerRequest request = context.Request;
 
-                String vmName = request.QueryString["vmName"];
-                String clipboard = request.QueryString["clipboard"];
-                callBack(new ClientData(vmName: vmName, clipboard: clipboard));
+                try
+                {
+                    String vmName = request.QueryString["vmName"];
+                    String? imageBase64 = request.QueryString["imagBase64"];
+                    String? clipboard = request.QueryString["clipboard"];
+                    callBack(new ClientData(vmName: vmName, imageBase64: imageBase64, clipboard: clipboard));
+                }
+                catch { }
 
                 //request.QueryString.Count;
                 // Obtain a response object.
@@ -57,6 +92,5 @@ namespace vitual_machine_online_manager.Function
             output.Close();
             listener.Stop();
         }
-
     }
 }
