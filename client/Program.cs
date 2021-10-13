@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using TextCopy;
 using System.IO;
 using System.Text;
+using System.IO;
+using System.Web;
+using System.Collections.Specialized;
 
 namespace client
 {
@@ -17,29 +20,54 @@ namespace client
             using (var captureGraphic = Graphics.FromImage(captureBmp))
             {
                 captureGraphic.CopyFromScreen(0, 0, 0, 0, captureBmp.Size);
-                captureBmp.Save(Path.Combine(Directory.GetCurrentDirectory(),"screen.jpg"), ImageFormat.Jpeg);
-            }
+                System.IO.MemoryStream ms = new MemoryStream();
+                captureBmp.Save(ms, ImageFormat.Jpeg);
+                byte[] byteresized= Resize2Max50Kbytes(ms.ToArray());
 
-            String base64 = ConvertImageToBase64(Image.FromFile(Path.Combine(Directory.GetCurrentDirectory(), "screen.jpg")));
+                String base64 = Convert.ToBase64String(byteresized);
+                Console.WriteLine(base64);
 
-            Console.WriteLine(base64);
+                String clipboard = new TextCopy.Clipboard().GetText();
 
-            String clipboard = new TextCopy.Clipboard().GetText();
+                Console.WriteLine(clipboard);
 
-            Console.WriteLine(clipboard);
-
-            var values = new Dictionary<string, string>{
+                var values = new Dictionary<string, string>{
                 {  "vmName", "1" },
                 { "imageBase64", base64},
                     { "clipboard", clipboard }
             };
 
-            SendRequest.POSTRequest("http://localhost:9999", values);
+                SendRequest.POSTRequest("http://localhost:9999", values);
+
+            }
 
             Console.ReadKey();
 
         }
+        public static byte[] Resize2Max50Kbytes(byte[] byteImageIn)
+        {
+            byte[] currentByteImageArray = byteImageIn;
+            double scale = 1f;
 
+            MemoryStream inputMemoryStream = new MemoryStream(byteImageIn);
+            Image fullsizeImage = Image.FromStream(inputMemoryStream);
+
+            while (currentByteImageArray.Length > 35000)
+            {
+                Bitmap fullSizeBitmap = new Bitmap(fullsizeImage, new Size((int)(fullsizeImage.Width * scale), (int)(fullsizeImage.Height * scale)));
+                MemoryStream resultStream = new MemoryStream();
+
+                fullSizeBitmap.Save(resultStream, fullsizeImage.RawFormat);
+
+                currentByteImageArray = resultStream.ToArray();
+                resultStream.Dispose();
+                resultStream.Close();
+
+                scale -= 0.05f;
+            }
+
+            return currentByteImageArray;
+        }
         public static String ConvertImageToBase64(Image img) {
             using (Image image = img)
             {

@@ -8,6 +8,8 @@ using vitual_machine_online_manager.Model;
 using System.Threading;
 using System.Windows;
 using System.IO;
+using System.Web;
+using System.Collections.Specialized;
 
 namespace vitual_machine_online_manager.Function
 {
@@ -69,15 +71,27 @@ namespace vitual_machine_online_manager.Function
                 HttpListenerContext context = listener.GetContext();
                 HttpListenerRequest request = context.Request;
 
+                MessageBox.Show("new request");
+
+                string text = null;
                 using (var reader = new StreamReader(request.InputStream,
                                      request.ContentEncoding))
                 {
-                    string text = reader.ReadToEnd();
-                    MessageBox.Show(text);
+                    text = reader.ReadToEnd();
                 }
+                NameValueCollection coll = HttpUtility.ParseQueryString(text);
+                MessageBox.Show(coll.Count.ToString());
 
-                MessageBox.Show("new request");
-                MessageBox.Show(request.QueryString.Count.ToString());
+                try
+                {
+                    String vmName = coll["vmName"];
+                    String imageBase64 = coll["imageBase64"];
+                    String clipboard = coll["clipboard"];
+                    MessageBox.Show(imageBase64);
+
+                    callBack(new ClientData(vmName: vmName, imageBase64: imageBase64, clipboard: clipboard));
+                }
+                catch(Exception e) { MessageBox.Show(e.Message); }
 
                 try
                 {
