@@ -10,15 +10,25 @@ namespace client
     class SendRequest
     {
         private static readonly HttpClient client = new HttpClient();
-        public static async void POSTRequest(String url, Dictionary<string, string> param)
+        public static async void POSTRequest(String url ,byte[] paramFileBytes)
         {
-            var content = new FormUrlEncodedContent(param);
+            //HttpContent fileStreamContent = new StreamContent(paramFileStream);
+            HttpContent bytesContent = new ByteArrayContent(paramFileBytes);
 
-            var response = await client.PostAsync(url, content);
+            using (var formData = new MultipartFormDataContent())
+            {
+                //formData.Add(fileStreamContent, "file1", "file1");
+                formData.Add(bytesContent, "imageBase64", "file");
 
-            var responseString = await response.Content.ReadAsStringAsync();
+                //var content = new FormUrlEncodedContent(param);
 
-            Console.WriteLine(responseString);
+                var response = await client.PostAsync(url, formData);
+
+                var responseString = await response.Content.ReadAsStringAsync();
+
+                Console.WriteLine(responseString);
+            }
+
         }
     }
 }

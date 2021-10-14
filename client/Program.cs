@@ -23,6 +23,7 @@ namespace client
                 System.IO.MemoryStream ms = new MemoryStream();
                 captureBmp.Save(ms, ImageFormat.Jpeg);
                 byte[] byteresized= Resize2Max50Kbytes(ms.ToArray());
+                byte[] img = ms.ToArray();
 
                 String base64 = Convert.ToBase64String(byteresized);
                 Console.WriteLine(base64);
@@ -31,13 +32,13 @@ namespace client
 
                 Console.WriteLine(clipboard);
 
-                var values = new Dictionary<string, string>{
-                {  "vmName", "1" },
-                { "imageBase64", base64},
-                    { "clipboard", clipboard }
-            };
+            //    var values = new Dictionary<string, string>{
+            //    {  "vmName", "1" },
+            //    { "imageBase64", base64},
+            //        { "clipboard", clipboard }
+            //};
 
-                SendRequest.POSTRequest("http://localhost:9999", values);
+                SendRequest.POSTRequest("http://localhost:9999", img);
 
             }
 
