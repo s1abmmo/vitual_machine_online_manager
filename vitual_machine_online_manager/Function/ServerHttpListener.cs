@@ -10,6 +10,7 @@ using System.Windows;
 using System.IO;
 using System.Web;
 using System.Collections.Specialized;
+using System.Net.Http;
 
 namespace vitual_machine_online_manager.Function
 {
@@ -50,14 +51,10 @@ namespace vitual_machine_online_manager.Function
                 Console.WriteLine("Windows XP SP2 or Server 2003 is required to use the HttpListener class.");
                 return;
             }
-            // URI prefixes are required,
-            // for example "http://contoso.com:8080/index/".
             if (prefixes == null || prefixes.Length == 0)
                 throw new ArgumentException("prefixes");
 
-            // Create a listener.
             HttpListener listener = new HttpListener();
-            // Add the prefixes.
             foreach (string s in prefixes)
             {
                 listener.Prefixes.Add(s);
@@ -66,54 +63,46 @@ namespace vitual_machine_online_manager.Function
             while (true)
             {
                 listener.Start();
-                Console.WriteLine("Listening...");
-                // Note: The GetContext method blocks while waiting for a request.
                 HttpListenerContext context = listener.GetContext();
                 HttpListenerRequest request = context.Request;
 
-                MessageBox.Show("new request");
+                //MessageBox.Show(request.QueryString.Count.ToString());
 
-                string text = null;
-                using (var reader = new StreamReader(request.InputStream,
-                                     request.ContentEncoding))
+                string input = null;
+                using (StreamReader reader = new StreamReader(request.InputStream))
                 {
-                    text = reader.ReadToEnd();
+                    input = reader.ReadToEnd();
                 }
-                NameValueCollection coll = HttpUtility.ParseQueryString(text);
-                MessageBox.Show(coll.Count.ToString());
+                NameValueCollection coll = HttpUtility.ParseQueryString(input);
 
                 try
                 {
                     String vmName = coll["vmName"];
-                    String imageBase64 = coll["imageBase64"];
-                    String clipboard = coll["clipboard"];
-                    MessageBox.Show(imageBase64);
-
-                    callBack(new ClientData(vmName: vmName, imageBase64: imageBase64, clipboard: clipboard));
+                    String? clipboard = coll["clipboard"];
+                    callBack(new ClientData(vmName: vmName, imageBase64: null, clipboard: clipboard));
                 }
-                catch(Exception e) { MessageBox.Show(e.Message); }
+                catch { }
 
                 try
                 {
                     String vmName = request.QueryString["vmName"];
-                    String? imageBase64 = request.QueryString["imageBase64"];
+                    //String? imageBase64 = request.QueryString["imageBase64"];
                     String? clipboard = request.QueryString["clipboard"];
-                    callBack(new ClientData(vmName: vmName, imageBase64: imageBase64, clipboard: clipboard));
+                    callBack(new ClientData(vmName: vmName, imageBase64: null, clipboard: clipboard));
                 }
                 catch { }
 
-                //request.QueryString.Count;
-                // Obtain a response object.
-                HttpListenerResponse response = context.Response;
-                // Construct a response.
-                string responseString = "OK";
-                byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
-                // Get a response stream and write the response to it.
-                response.ContentLength64 = buffer.Length;
-                output = response.OutputStream;
-                output.Write(buffer, 0, buffer.Length);
+                try
+                {
+                    HttpListenerResponse response = context.Response;
+                    string responseString = "OK";
+                    byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
+                    response.ContentLength64 = buffer.Length;
+                    output = response.OutputStream;
+                    output.Write(buffer, 0, buffer.Length);
+                }
+                catch { }
             }
-            // You must close the output stream.
             output.Close();
             listener.Stop();
         }

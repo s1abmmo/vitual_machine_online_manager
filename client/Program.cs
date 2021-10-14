@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using TextCopy;
 using System.IO;
 using System.Text;
-using System.IO;
 using System.Web;
 using System.Collections.Specialized;
 
@@ -16,60 +15,41 @@ namespace client
     {
         static void Main(string[] args)
         {
-            var captureBmp = new Bitmap(1920, 1024, PixelFormat.Format32bppArgb);
-            using (var captureGraphic = Graphics.FromImage(captureBmp))
-            {
-                captureGraphic.CopyFromScreen(0, 0, 0, 0, captureBmp.Size);
-                System.IO.MemoryStream ms = new MemoryStream();
-                captureBmp.Save(ms, ImageFormat.Jpeg);
-                byte[] byteresized= Resize2Max50Kbytes(ms.ToArray());
-                byte[] img = ms.ToArray();
+            //var captureBmp = new Bitmap(1920, 1024, PixelFormat.Format32bppArgb);
+            //using (var captureGraphic = Graphics.FromImage(captureBmp))
+            //{
+            //    captureGraphic.CopyFromScreen(0, 0, 0, 0, captureBmp.Size);
+            //    System.IO.MemoryStream ms = new MemoryStream();
+            //    captureBmp.Save(ms, ImageFormat.Jpeg);
+            //    byte[] img = ms.ToArray();
+            //    String base64 = Convert.ToBase64String(img);
+            //    Console.WriteLine(base64);
+            //}
 
-                String base64 = Convert.ToBase64String(byteresized);
-                Console.WriteLine(base64);
+            String clipboard = new TextCopy.Clipboard().GetText();
 
-                String clipboard = new TextCopy.Clipboard().GetText();
+            Console.WriteLine(clipboard);
 
-                Console.WriteLine(clipboard);
+            String[] configs = File.ReadAllLines(Path.Combine(Directory.GetCurrentDirectory(), "config.txt"));
+            String url = configs[0];
+            String vmName = configs[1];
 
-            //    var values = new Dictionary<string, string>{
-            //    {  "vmName", "1" },
-            //    { "imageBase64", base64},
-            //        { "clipboard", clipboard }
-            //};
+            var values = new Dictionary<string, string>{
+                {  "vmName", vmName },
+                //{ "imageBase64", base64},
+                    { "clipboard", clipboard }
+            };
 
-                SendRequest.POSTRequest("http://localhost:9999", img);
+            Console.WriteLine(vmName);
+            Console.WriteLine(url);
 
-            }
+            SendRequest.POSTRequest(url, values);
 
             Console.ReadKey();
 
         }
-        public static byte[] Resize2Max50Kbytes(byte[] byteImageIn)
+        public static String ConvertImageToBase64(Image img)
         {
-            byte[] currentByteImageArray = byteImageIn;
-            double scale = 1f;
-
-            MemoryStream inputMemoryStream = new MemoryStream(byteImageIn);
-            Image fullsizeImage = Image.FromStream(inputMemoryStream);
-
-            while (currentByteImageArray.Length > 35000)
-            {
-                Bitmap fullSizeBitmap = new Bitmap(fullsizeImage, new Size((int)(fullsizeImage.Width * scale), (int)(fullsizeImage.Height * scale)));
-                MemoryStream resultStream = new MemoryStream();
-
-                fullSizeBitmap.Save(resultStream, fullsizeImage.RawFormat);
-
-                currentByteImageArray = resultStream.ToArray();
-                resultStream.Dispose();
-                resultStream.Close();
-
-                scale -= 0.05f;
-            }
-
-            return currentByteImageArray;
-        }
-        public static String ConvertImageToBase64(Image img) {
             using (Image image = img)
             {
                 using (MemoryStream m = new MemoryStream())

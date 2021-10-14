@@ -53,9 +53,9 @@ namespace vitual_machine_online_manager
 
                     index = listVitualMachine.FindIndex(0, listVitualMachine.Count, x => x.name == a.vmName);
 
-                    String nameImage = SaveFile.SaveImageBase64(a.imageBase64, a.vmName);
+                    //String nameImage = SaveFile.SaveImageBase64(a.imageBase64, a.vmName);
 
-                    listVitualMachine[index].updateData(nameImage,a.clipboard);
+                    listVitualMachine[index].updateData(null,a.clipboard);
 
                     this.Dispatcher.Invoke(() =>
                     {
