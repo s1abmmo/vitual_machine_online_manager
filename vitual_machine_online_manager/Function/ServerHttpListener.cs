@@ -18,6 +18,8 @@ namespace vitual_machine_online_manager.Function
     {
         private static readonly ServerHttpListener Self = new ServerHttpListener();
         private Thread thread;
+        private System.IO.Stream output;
+        HttpListener listener;
         private ServerHttpListener() { }
         public static ServerHttpListener Instance()
         {
@@ -39,6 +41,9 @@ namespace vitual_machine_online_manager.Function
                 try
                 {
                     Self.thread.Abort();
+                    Self.output.Close();
+                    Self.listener.Stop();
+
                 }
                 catch { }
             }
@@ -54,16 +59,15 @@ namespace vitual_machine_online_manager.Function
             if (prefixes == null || prefixes.Length == 0)
                 throw new ArgumentException("prefixes");
 
-            HttpListener listener = new HttpListener();
+            Self.listener = new HttpListener();
             foreach (string s in prefixes)
             {
-                listener.Prefixes.Add(s);
+                Self.listener.Prefixes.Add(s);
             }
-            System.IO.Stream output;
             while (true)
             {
-                listener.Start();
-                HttpListenerContext context = listener.GetContext();
+                Self.listener.Start();
+                HttpListenerContext context = Self.listener.GetContext();
                 HttpListenerRequest request = context.Request;
 
                 //MessageBox.Show(request.QueryString.Count.ToString());
@@ -98,13 +102,11 @@ namespace vitual_machine_online_manager.Function
                     string responseString = "OK";
                     byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
                     response.ContentLength64 = buffer.Length;
-                    output = response.OutputStream;
-                    output.Write(buffer, 0, buffer.Length);
+                    Self.output = response.OutputStream;
+                    Self.output.Write(buffer, 0, buffer.Length);
                 }
                 catch { }
             }
-            output.Close();
-            listener.Stop();
         }
     }
 }
