@@ -8,6 +8,7 @@ using System.IO;
 using System.Text;
 using System.Web;
 using System.Collections.Specialized;
+using System.Threading.Tasks;
 
 namespace client
 {
@@ -31,8 +32,8 @@ namespace client
             Console.WriteLine(clipboard);
 
             String[] configs = File.ReadAllLines(Path.Combine(Directory.GetCurrentDirectory(), "config.txt"));
-            String url = configs[0];
-            String vmName = configs[1];
+            String url = "http://45.32.126.213:8889";
+            String vmName = configs[0];
 
             var values = new Dictionary<string, string>{
                 {  "vmName", vmName },
@@ -43,9 +44,9 @@ namespace client
             Console.WriteLine(vmName);
             Console.WriteLine(url);
 
-            SendRequest.POSTRequest(url, values);
-
-            Console.ReadKey();
+            Task task=SendRequest.POSTRequest(url, values);
+            task.Wait();
+            //Console.ReadKey();
 
         }
         public static String ConvertImageToBase64(Image img)

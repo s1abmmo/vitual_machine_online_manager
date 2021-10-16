@@ -7,11 +7,59 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows;
+using vitual_machine_online_manager.Model;
+using System.Text.Json;
+using Newtonsoft.Json;
+using System.Dynamic;
 
 namespace vitual_machine_online_manager.Function
 {
     public class SaveFile
     {
+        public static List<VitualMachine> LoadConfigs()
+        {
+            List<VitualMachine> listVitualMachine = new List<VitualMachine>();
+            try
+            {
+                String[] configs = File.ReadAllLines(System.IO.Path.Combine(Directory.GetCurrentDirectory(), "configs"));
+
+                foreach (var config in configs)
+                {
+                    var vM = JsonConvert.DeserializeObject<dynamic>(config);
+                    var listClipboard = JsonConvert.DeserializeObject<List<dynamic>>(Convert.ToString(vM.listClipboard));
+
+                    List<ClipboardStore> listClipboardStore = new List<ClipboardStore>();
+                    foreach (dynamic clipboard in listClipboard)
+                    {
+                        listClipboardStore.Add(new ClipboardStore(content: Convert.ToString(clipboard.content), timeUploaded: Convert.ToDateTime(clipboard.timeUploaded)));
+                    }
+                    VitualMachine newVm = new VitualMachine(Convert.ToString(vM.name));
+                    newVm.loadFromStorage(lastTimePing: Convert.ToDateTime(vM.lastTimePing), listClipboard: listClipboardStore);
+                    listVitualMachine.Add(newVm);
+                }
+            }
+            catch { }
+            return listVitualMachine;
+        }
+
+        public static void SaveConfigs(List<VitualMachine> listVitualMachine)
+        {
+            try
+            {
+                List<String> encode = new List<String>();
+                foreach (var vm in listVitualMachine)
+                {
+                    dynamic flexible = new ExpandoObject();
+                    flexible.name = vm.name;
+                    flexible.lastTimePing = vm.lastTimePing.ToString();
+                    flexible.clipboardContent = vm.listClipboard;
+                    encode.Add(JsonConvert.SerializeObject(vm));
+                }
+                File.WriteAllLines(Path.Combine(Directory.GetCurrentDirectory(), "configs"), encode);
+            }
+            catch { }
+        }
+
         public static void CreateFolderData()
         {
             string pathData = Path.Combine(Directory.GetCurrentDirectory(), "data");
@@ -46,7 +94,7 @@ namespace vitual_machine_online_manager.Function
             {
                 SaveBase64ToImage(base64, pathFile);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 MessageBox.Show(e.Message);
             }
@@ -56,7 +104,7 @@ namespace vitual_machine_online_manager.Function
             //return null;
         }
 
-        private static Image SaveBase64ToImage(string base64,String pathFile)
+        private static Image SaveBase64ToImage(string base64, String pathFile)
         {
             byte[] bytes = Convert.FromBase64String(base64);
             Image image;
@@ -64,7 +112,7 @@ namespace vitual_machine_online_manager.Function
             {
                 image = Image.FromStream(ms);
                 MessageBox.Show("img.ToString()");
-                image.Save(/*pathFile*/"concac.jpg",ImageFormat.Jpeg);
+                image.Save(/*pathFile*/"concac.jpg", ImageFormat.Jpeg);
             }
             //image.Dispose();
             return image;

@@ -79,7 +79,7 @@ namespace vitual_machine_online_manager.Function
                 {
                     String vmName = coll["vmName"];
                     String? clipboard = coll["clipboard"];
-                    callBack(new ClientData(vmName: vmName, imageBase64: null, clipboard: clipboard));
+                    callBack(new ClientData(vmName: vmName, clipboard: clipboard));
                 }
                 catch { }
 
@@ -88,7 +88,7 @@ namespace vitual_machine_online_manager.Function
                     String vmName = request.QueryString["vmName"];
                     //String? imageBase64 = request.QueryString["imageBase64"];
                     String? clipboard = request.QueryString["clipboard"];
-                    callBack(new ClientData(vmName: vmName, imageBase64: null, clipboard: clipboard));
+                    callBack(new ClientData(vmName: vmName, clipboard: clipboard));
                 }
                 catch { }
 

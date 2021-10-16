@@ -4,13 +4,14 @@ using System.Net.Http;
 using System.IO;
 using System.Web;
 using System.Collections.Specialized;
+using System.Threading.Tasks;
 
 namespace client
 {
     class SendRequest
     {
         private static readonly HttpClient client = new HttpClient();
-        public static async void POSTRequest(String url, Dictionary<string, string> values)
+        public static async Task POSTRequest(String url, Dictionary<string, string> values)
         {
 
             var content = new FormUrlEncodedContent(values);

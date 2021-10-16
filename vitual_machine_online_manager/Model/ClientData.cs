@@ -9,12 +9,12 @@ namespace vitual_machine_online_manager.Model
     public class ClientData
     {
         public String vmName { get; private set; }
-        public String? imageBase64 { get; private set; }
+        //public String? imageBase64 { get; private set; }
         public String? clipboard { get; private set; }
-        public ClientData(String vmName, String? imageBase64, String? clipboard)
+        public ClientData(String vmName, String? clipboard)
         {
             this.vmName = vmName;
-            this.imageBase64 = imageBase64;
+            //this.imageBase64 = imageBase64;
             this.clipboard = clipboard;
         }
     }

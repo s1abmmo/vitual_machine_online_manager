@@ -17,6 +17,7 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using vitual_machine_online_manager.Function;
+using vitual_machine_online_manager.View;
 
 namespace vitual_machine_online_manager
 {
@@ -28,18 +29,20 @@ namespace vitual_machine_online_manager
         public MainWindow()
         {
             InitializeComponent();
-            listView.ItemsSource = listVitualMachine;
-            //var cc = new VitualMachine(name: "DMM");
-            //string jsonString = JsonSerializer.Serialize(cc);
 
-            Loop.Instance().Run(() => {
+            listVitualMachine=SaveFile.LoadConfigs();
+
+            listView.ItemsSource = listVitualMachine;
+
+            Loop.Instance().Run(() =>
+            {
                 this.Dispatcher.Invoke(() =>
                 {
                     listView.Items.Refresh();
                 });
             });
 
-            String[] prefix = { "http://localhost:9999/" };
+            String[] prefix = { "http://*:8889/" };
             ServerHttpListener.Instance().Run(prefix, (a) =>
             {
                 if (a.vmName == "" || a.vmName == null)
@@ -53,9 +56,7 @@ namespace vitual_machine_online_manager
 
                     index = listVitualMachine.FindIndex(0, listVitualMachine.Count, x => x.name == a.vmName);
 
-                    //String nameImage = SaveFile.SaveImageBase64(a.imageBase64, a.vmName);
-
-                    listVitualMachine[index].updateData(null,a.clipboard);
+                    listVitualMachine[index].updateData(new ClipboardStore(a.clipboard, DateTime.Now));
 
                     this.Dispatcher.Invoke(() =>
                     {
@@ -65,20 +66,28 @@ namespace vitual_machine_online_manager
                 }
                 else
                 {
-                    String nameImage = SaveFile.SaveImageBase64(a.imageBase64, a.vmName);
-
-                    listVitualMachine[index].updateData(nameImage, a.clipboard);
+                    listVitualMachine[index].updateData(new ClipboardStore(a.clipboard, DateTime.Now));
 
                     this.Dispatcher.Invoke(() =>
                     {
                         listView.Items.Refresh();
                     });
                 }
+                SaveFile.SaveConfigs(listVitualMachine);
             });
         }
 
-        private static List<VitualMachine> listVitualMachine = new List<VitualMachine>();
+        public static List<VitualMachine> listVitualMachine = new List<VitualMachine>();
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = sender as Button;
+            StackPanel s = button.Parent as StackPanel;
+            String id = s.Uid;
+            var vm= listVitualMachine.Find(e => e.name == id);
+            vitual_machine_online_manager.View.Clipboard clipboard = new vitual_machine_online_manager.View.Clipboard(vm.listClipboard);
+            clipboard.Show();
+        }
     }
 
     public class StatusConverter : IValueConverter
@@ -90,9 +99,9 @@ namespace vitual_machine_online_manager
 
             TimeSpan duration = DateTime.Now.ToUniversalTime() - (DateTime)value;
 
-            if(duration<Configs.Instance().distanceMaxTime)
+            if (duration < Configs.Instance().distanceMaxTime)
                 return "OK";
-                
+
             return "ERROR";
         }
 
@@ -109,7 +118,7 @@ namespace vitual_machine_online_manager
             if (value is not DateTime)
                 return "---";
 
-            TimeSpan duration = DateTime.Now.ToUniversalTime().AddHours(7)-(DateTime)value;
+            TimeSpan duration = DateTime.Now.ToUniversalTime().AddHours(7) - (DateTime)value;
             return duration.ToString(@"dd\.hh\:mm\:ss");
         }
 
