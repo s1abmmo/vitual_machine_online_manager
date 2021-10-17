@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -30,8 +29,7 @@ namespace vitual_machine_online_manager
         {
             InitializeComponent();
 
-            listVitualMachine=SaveFile.LoadConfigs();
-
+            listVitualMachine = SaveFile.LoadConfigs();
             listView.ItemsSource = listVitualMachine;
 
             Loop.Instance().Run(() =>
@@ -84,48 +82,28 @@ namespace vitual_machine_online_manager
             Button button = sender as Button;
             StackPanel s = button.Parent as StackPanel;
             String id = s.Uid;
-            var vm= listVitualMachine.Find(e => e.name == id);
+            var vm = listVitualMachine.Find(e => e.name == id);
             vitual_machine_online_manager.View.Clipboard clipboard = new vitual_machine_online_manager.View.Clipboard(vm.listClipboard);
             clipboard.Show();
         }
-    }
 
-    public class StatusConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            if (value is not DateTime)
-                return "WAIT";
-
-            TimeSpan duration = DateTime.Now.ToUniversalTime() - (DateTime)value;
-
-            if (duration < Configs.Instance().distanceMaxTime)
-                return "OK";
-
-            return "ERROR";
+            selectPath.Content = GeneralFunction.OpenDialog();
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            return Binding.DoNothing;
+            GeneralFunction.AddNewList(selectPath.Content.ToString());
+        }
+
+        private void setDistanceMaxTime_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Configs.SetConfigs(distanceMaxTime: TimeSpan.FromSeconds(Convert.ToInt32(distanceMaxTime.Text)));
+            }
+            catch { }
         }
     }
-
-    public class DurationConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value is not DateTime)
-                return "---";
-
-            TimeSpan duration = DateTime.Now.ToUniversalTime().AddHours(7) - (DateTime)value;
-            return duration.ToString(@"dd\.hh\:mm\:ss");
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            return Binding.DoNothing;
-        }
-    }
-
 }

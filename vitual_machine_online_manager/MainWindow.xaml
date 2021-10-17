@@ -4,62 +4,81 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:vitual_machine_online_manager"
+        xmlns:convertui="clr-namespace:vitual_machine_online_manager.ConvertUI"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary
+                    Source="GeneralDictionary.xaml">
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <DockPanel>
+        <WrapPanel Height="auto" DockPanel.Dock="Top" Margin="30,10,0,0">
+            <Button Height="30" Width="150" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Thêm danh sách máy ảo" Click="Button_Click_2"></Button>
+            <TextBlock Margin="15,5,15,0" Text="Đường dẫn"></TextBlock>
+            <Button Name="selectPath" Height="15" Width="200" Background="White" Click="Button_Click_1"></Button>
+            <TextBlock Margin="15,5,15,0" Text="Overtime:"></TextBlock>
+            <TextBox Name="distanceMaxTime" Width="50" Height="20"></TextBox>
+            <Button Content="Set overtime" Margin="15,0,15,0" Name="setDistanceMaxTime" Height="20" Width="auto" Click="setDistanceMaxTime_Click"></Button>
+        </WrapPanel>
+        <Grid DockPanel.Dock="Bottom">
+            <ListView Margin="30,15,30,15" Name="listView">
+                <ListView.Resources>
+                    <convertui:StatusConverter x:Key="statusConverter" />
+                    <convertui:DurationConverter x:Key="durationConverter" />
+                </ListView.Resources>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Tên máy ảo" Width="100" >
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Height="auto" Width="auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Center" Text="{Binding name}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-    <Grid>
-        <ListView Margin="30,30,30,30" Name="listView">
-            <ListView.Resources>
-                <local:StatusConverter x:Key="statusConverter" />
-                <local:DurationConverter x:Key="durationConverter" />
-            </ListView.Resources>
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Tên máy ảo" Width="100" >
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Height="auto" Width="auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Center" Text="{Binding name}" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    
-                    <GridViewColumn Header="Lần gửi cuối" Width="150" >
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Height="auto" Width="auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Center" Text="{Binding lastTimePing}" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
+                        <GridViewColumn Header="Lần gửi cuối" Width="150" >
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Height="auto" Width="auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Center" Text="{Binding lastTimePing}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-                    <GridViewColumn Header="Khoảng cách" Width="100" >
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Height="auto" Width="auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Center" Text="{Binding Path=lastTimePing,Converter={StaticResource durationConverter}}" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
+                        <GridViewColumn Header="Khoảng cách" Width="100" >
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Height="auto" Width="auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Center" Text="{Binding Path=lastTimePing,Converter={StaticResource durationConverter}}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-                    <GridViewColumn Header="Tình trạng" Width="100" >
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Height="auto" Width="auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Center" Text="{Binding  Path=lastTimePing, Converter={StaticResource statusConverter}}" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
+                        <GridViewColumn Header="Tình trạng" Width="100" >
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Height="auto" Width="auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Center" Text="{Binding  Path=lastTimePing, Converter={StaticResource statusConverter}}" Style="{StaticResource textStatus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-                    <GridViewColumn Header="" Width="150" >
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel  Uid="{Binding name}">
-                                    <Button Content="Danh sách clipboard" Click="Button_Click"></Button>
-                                </StackPanel>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
+                        <GridViewColumn Header="" Width="150" >
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel  Uid="{Binding name}">
+                                        <Button Content="Danh sách clipboard" Click="Button_Click"></Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-                </GridView>
-            </ListView.View>
-        </ListView>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
 
-    </Grid>
+    </DockPanel>
 </Window>

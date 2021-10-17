@@ -24,7 +24,7 @@ namespace vitual_machine_online_manager.Model
                 lastTimePing = dateTimeUtc.AddHours(7);
             }
             //this.listNameScreenshot = createByClient ? new List<String>() : null;
-            this.listClipboard = createByClient ? new List<ClipboardStore>() : null;
+            this.listClipboard = new List<ClipboardStore>();
             this.loaded = false;
         }
 
@@ -32,7 +32,7 @@ namespace vitual_machine_online_manager.Model
         {
             if (!this.loaded)
             {
-                this.lastTimePing = lastTimePing;
+                this.lastTimePing = null;
                 //this.listNameScreenshot = listNameScreenshot ?? new List<String>();
                 this.listClipboard = listClipboard ?? new List<ClipboardStore>();
                 this.loaded = true;
@@ -59,7 +59,7 @@ namespace vitual_machine_online_manager.Model
     public class ClipboardStore
     {
         public String content { get; set; }
-        public DateTime timeUploaded{ get; set; }
+        public DateTime timeUploaded { get; set; }
         public ClipboardStore(String content, DateTime timeUploaded)
         {
             this.content = content;

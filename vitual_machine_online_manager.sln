@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.31727.386
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vitual_machine_online_manager", "vitual_machine_online_manager\vitual_machine_online_manager.csproj", "{A2684CE1-4B07-48C5-9652-71CE2A5CD085}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "client", "client\client.csproj", "{D21E3C5F-2EE3-48D6-BF6A-210ED80D6B60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "client", "client\client.csproj", "{D21E3C5F-2EE3-48D6-BF6A-210ED80D6B60}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "client_netframework", "client_netframework\client_netframework.csproj", "{E7D49EE2-F58A-4BE4-8822-97B18382569D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,14 @@ Global
 		{D21E3C5F-2EE3-48D6-BF6A-210ED80D6B60}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D21E3C5F-2EE3-48D6-BF6A-210ED80D6B60}.Release|x64.ActiveCfg = Release|Any CPU
 		{D21E3C5F-2EE3-48D6-BF6A-210ED80D6B60}.Release|x64.Build.0 = Release|Any CPU
+		{E7D49EE2-F58A-4BE4-8822-97B18382569D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7D49EE2-F58A-4BE4-8822-97B18382569D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7D49EE2-F58A-4BE4-8822-97B18382569D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E7D49EE2-F58A-4BE4-8822-97B18382569D}.Debug|x64.Build.0 = Debug|Any CPU
+		{E7D49EE2-F58A-4BE4-8822-97B18382569D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7D49EE2-F58A-4BE4-8822-97B18382569D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7D49EE2-F58A-4BE4-8822-97B18382569D}.Release|x64.ActiveCfg = Release|Any CPU
+		{E7D49EE2-F58A-4BE4-8822-97B18382569D}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

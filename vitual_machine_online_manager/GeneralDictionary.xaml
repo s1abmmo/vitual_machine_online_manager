@@ -3,13 +3,14 @@
                     xmlns:local="clr-namespace:vitual_machine_online_manager"
                     >
     <Style x:Key="textStatus" TargetType="TextBlock">
-        <Setter Property="Text" Value="OK" />
-        <Setter Property="Foreground" Value="Blue" />
+        <Setter Property="Foreground" Value="Black" />
         <Style.Triggers>
-            <DataTrigger>
-                <Setter Property="Text" Value="ERROR" />
+            <Trigger Property="Text" Value="OK">
+                <Setter Property="Foreground" Value="Blue" />
+            </Trigger>
+            <Trigger Property="Text" Value="ERROR">
                 <Setter Property="Foreground" Value="Red" />
-            </DataTrigger>
+            </Trigger>
         </Style.Triggers>
     </Style>
 </ResourceDictionary>
